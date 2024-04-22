@@ -19,22 +19,29 @@ Game.Key = {
   TILDA:    192,
 
   map: function(map, context, cfg) {
-    cfg = cfg || {};
-    var ele = $(cfg.ele || document);
-    var onkey = function(ev, keyCode, mode) {
-      var n, k, i;
-      for(n = 0 ; n < map.length ; ++n) {
-        k = map[n];
-        k.mode = k.mode || 'up';
-        if (Game.Key.match(k, keyCode, mode, context, ev.ctrlKey, ev.shiftKey)) {
-          k.action.call(context, keyCode, ev.ctrlKey, ev.shiftKey);
-          return Game.Event.stop(ev);
-        }
+  cfg = cfg || {};
+  var ele = $(cfg.ele || document);
+  var onkey = function(ev, keyCode, mode) {
+    // Добавьте здесь обработку событий с сенсорных устройств
+    console.log('KeyCode: ' + keyCode + ', Mode: ' + mode);
+    var n, k, i;
+    for(n = 0 ; n < map.length ; ++n) {
+      k = map[n];
+      k.mode = k.mode || 'up';
+      if (Game.Key.match(k, keyCode, mode, context, ev.ctrlKey, ev.shiftKey)) {
+        k.action.call(context, keyCode, ev.ctrlKey, ev.shiftKey);
+        return Game.Event.stop(ev);
       }
-    };
+    }
+  };
+      if (isTouchDevice()) {
+    ele.on('touchstart', function(ev) { return onkey(ev, ev.keyCode, 'down'); });
+    ele.on('touchend', function(ev) { return onkey(ev, ev.keyCode, 'up'); });
+  } else {
     ele.on('keydown', function(ev) { return onkey(ev, ev.keyCode, 'down'); });
-    ele.on('keyup',   function(ev) { return onkey(ev, ev.keyCode, 'up');   });
-  },
+    ele.on('keyup', function(ev) { return onkey(ev, ev.keyCode, 'up'); });
+  }
+},
 
   match: function(map, keyCode, mode, context, ctrl, shift) {
     if (map.mode === mode) {
