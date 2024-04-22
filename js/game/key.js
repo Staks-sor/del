@@ -49,6 +49,28 @@ Game.Key = {
     }
     return false;
   }
+// Константы для управления на touchscreen
+const TOUCH = 1001;
+const TOUCH_MOVE = 1002;
+const TOUCH_END = 1003;
+
+// Функция обработки событий на touchscreen
+function onkey(ev, code, type) {
+    // Ваша логика обработки событий
+    console.log(Received ${type} event on TOUCH with code ${code});
+}
+
+// Функция сопоставления событий
+function match(ev) {
+    if (ev.type === 'touchstart') return TOUCH;
+    if (ev.type === 'touchmove') return TOUCH_MOVE;
+    if (ev.type === 'touchend') return TOUCH_END;
+}
+
+// Привязка событий на touchscreen
+ele.on('touchstart', function(ev) { return onkey(ev, TOUCH, 'down'); });
+ele.on('touchend', function(ev) { return onkey(ev, TOUCH_END, 'up'); });
+ele.on('touchmove', function(ev) { return onkey(ev, TOUCH_MOVE, 'move'); });
 
 };
 
